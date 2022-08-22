@@ -261,9 +261,11 @@ int main(int argc, const char * argv[]) {
     signal(SIGINT, ctrlc);
     
 	if(opt_channel_type == CHANNEL_TYPE_SERIALPORT)
-        drv->setMotorSpeed();
+        drv->startMotor();
     // start scan...
-    drv->startScan(0,1);
+    uint16_t pwm = 700;
+    drv->setMotorPWM(pwm);
+    drv->startScan();
 
     // fetech result and print it out...
     while (1) {
@@ -289,9 +291,7 @@ int main(int argc, const char * argv[]) {
     }
 
     drv->stop();
-	delay(200);
-	if(opt_channel_type == CHANNEL_TYPE_SERIALPORT)
-        drv->setMotorSpeed(0);
+    drv->stopMotor();
     // done!
 on_finished:
     if(drv) {
