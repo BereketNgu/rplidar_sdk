@@ -30,8 +30,8 @@
 #include <string.h>
 #include <limits>
 
-// #include <lcm/lcm-cpp.hpp>
-// #include "lcmtypes/lidar_msg_t.hpp"
+#include <lcm/lcm-cpp.hpp>
+#include "lcmtypes/lidar_msg_t.hpp"
 
 #include "sl_lidar.h" 
 #include "sl_lidar_driver.h"
@@ -107,8 +107,8 @@ int main(int argc, const char * argv[]) {
 	int          opt_channel_type = CHANNEL_TYPE_SERIALPORT;
 
 
-    // lcm::LCM lcmConnection(NULL);
-    // if(!lcmConnection.good()){ return 1; }
+    lcm::LCM lcmConnection();
+    if(!lcmConnection.good()){ return 1; }
 
 	bool useArgcBaudrate = false;
 
@@ -285,7 +285,7 @@ int main(int argc, const char * argv[]) {
             float shortest_dis=std::numeric_limits<float>::infinity();
             float shortest_angle;
             int shortest_qual;
-            float prev_pos;
+            int prev_pos=std::numeric_limits<int>::infinity();;
             for (int pos = 0; pos < (int)count ; ++pos) {
                 // printf("%s theta: %03.2f Dist: %08.2f Q: %d \n", 
                 //     (nodes[pos].flag & SL_LIDAR_RESP_HQ_FLAG_SYNCBIT) ?"S ":"  ", 
