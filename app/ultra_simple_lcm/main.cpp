@@ -30,8 +30,8 @@
 #include <string.h>
 #include <limits>
 
-#include <lcm/lcm-cpp.hpp>
-#include "lcmtypes/lidar_msg_t.hpp"
+// #include <lcm/lcm-cpp.hpp>
+// #include "lcmtypes/lidar_msg_t.hpp"
 
 #include "sl_lidar.h" 
 #include "sl_lidar_driver.h"
@@ -107,8 +107,8 @@ int main(int argc, const char * argv[]) {
 	int          opt_channel_type = CHANNEL_TYPE_SERIALPORT;
 
 
-    lcm::LCM lcmConnection(NULL);
-    if(!lcmConnection.good()){ return 1; }
+    // lcm::LCM lcmConnection(NULL);
+    // if(!lcmConnection.good()){ return 1; }
 
 	bool useArgcBaudrate = false;
 
@@ -305,15 +305,15 @@ int main(int argc, const char * argv[]) {
                     }                  
                 }
                 else if(pos-prev_pos==1){
-                    lidar_msg_t lidar_msg;
-                    lidar_msg.desc="nearest obstacle information";
-                    lidar_msg.angle=shortest_angle;
-                    lidar_msg.dist=shortest_dis;
-                    lidar_msg.quality=shortest_qual;
-                    shortest_dis=std::numeric_limits<float>::infinity();
-                    lcmConnection.publish("LIDAR_READING", &lidar_msg);
+                    // lidar_msg_t lidar_msg;
+                    // lidar_msg.desc="nearest obstacle information";
+                    // lidar_msg.angle=shortest_angle;
+                    // lidar_msg.dist=shortest_dis;
+                    // lidar_msg.quality=shortest_qual;
+                    // lcmConnection.publish("LIDAR_READING", &lidar_msg);
                     printf("published the LIDAR reading: angle- %03.2f, distance-%08.2f, quality-%d \n",
                     shortest_angle,shortest_dis,shortest_qual);
+                    shortest_dis=std::numeric_limits<float>::infinity();
                 }
 
             }
