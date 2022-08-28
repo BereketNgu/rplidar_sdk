@@ -1,0 +1,10 @@
+struct lidar_msg_t
+{
+    //int64_t utime;
+ 
+    string desc;  // description
+    float angle;     // the value theta
+    float dist;	//distance
+    int16_t quality;
+   
+}

@@ -28,6 +28,10 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <string.h>
+#include <limits>
+
+#include <lcm/lcm-cpp.hpp>
+#include "lcmtypes/lidar_msg_t.hpp"
 
 #include "sl_lidar.h" 
 #include "sl_lidar_driver.h"
@@ -101,6 +105,10 @@ int main(int argc, const char * argv[]) {
     sl_u32         baudrateArray[2] = {115200, 256000};
     sl_result     op_result;
 	int          opt_channel_type = CHANNEL_TYPE_SERIALPORT;
+
+
+    lcm::LCM lcmConnection(NULL);
+    if(!lcmConnection.good()){ return 1; }
 
 	bool useArgcBaudrate = false;
 
@@ -274,12 +282,40 @@ int main(int argc, const char * argv[]) {
 
         if (SL_IS_OK(op_result)) {
             drv->ascendScanData(nodes, count);
+            float shortest_dis=std::numeric_limits<float>::infinity();
+            float shortest_angle;
+            int shortest_qual;
+            float prev_pos;
             for (int pos = 0; pos < (int)count ; ++pos) {
-                printf("%s theta: %03.2f Dist: %08.2f Q: %d \n", 
-                    (nodes[pos].flag & SL_LIDAR_RESP_HQ_FLAG_SYNCBIT) ?"S ":"  ", 
-                    (nodes[pos].angle_z_q14 * 90.f) / 16384.f,
-                    nodes[pos].dist_mm_q2/4.0f,
-                    nodes[pos].quality >> SL_LIDAR_RESP_MEASUREMENT_QUALITY_SHIFT);
+                // printf("%s theta: %03.2f Dist: %08.2f Q: %d \n", 
+                //     (nodes[pos].flag & SL_LIDAR_RESP_HQ_FLAG_SYNCBIT) ?"S ":"  ", 
+                //     (nodes[pos].angle_z_q14 * 90.f) / 16384.f,
+                //     nodes[pos].dist_mm_q2/4.0f,
+                //     nodes[pos].quality >> SL_LIDAR_RESP_MEASUREMENT_QUALITY_SHIFT);        
+                float theta=(nodes[pos].angle_z_q14 * 90.f) / 16384.f;
+                float distance=nodes[pos].dist_mm_q2/4.0f;
+                int qual= nodes[pos].quality >> SL_LIDAR_RESP_MEASUREMENT_QUALITY_SHIFT;
+                
+                if ((theta<10|| theta>350)&& qual>0){
+                    prev_pos=pos;
+                    if (shortest_dis>distance){
+                        shortest_dis=distance; 
+                        shortest_angle=theta; 
+                        shortest_qual=qual;  
+                    }                  
+                }
+                else if(pos-prev_pos==1){
+                    lidar_msg_t lidar_msg;
+                    lidar_msg.desc="nearest obstacle information";
+                    lidar_msg.angle=shortest_angle;
+                    lidar_msg.dist=shortest_dis;
+                    lidar_msg.quality=shortest_qual;
+                    shortest_dis=std::numeric_limits<float>::infinity();
+                    lcmConnection.publish("LIDAR_READING", &lidar_msg);
+                    printf("published the LIDAR reading: angle- %03.2f, distance-%08.2f, quality-%d \n",
+                    shortest_angle,shortest_dis,shortest_qual);
+                }
+
             }
         }
 
