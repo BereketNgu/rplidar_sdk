@@ -296,13 +296,15 @@ int main(int argc, const char * argv[]) {
                 float distance=nodes[pos].dist_mm_q2/4.0f;
                 int qual= nodes[pos].quality >> SL_LIDAR_RESP_MEASUREMENT_QUALITY_SHIFT;
                 
-                if ((theta<10|| theta>350)&& qual>0){
-                    prev_pos=pos;
-                    if (shortest_dis>distance){
-                        shortest_dis=distance; 
-                        shortest_angle=theta; 
-                        shortest_qual=qual;  
-                    }                  
+                if ((theta<10|| theta>350)){
+                    if(qual>0){
+                        prev_pos=pos;
+                        if (shortest_dis>distance){
+                            shortest_dis=distance; 
+                            shortest_angle=theta; 
+                            shortest_qual=qual;  
+                        }  
+                    }                
                 }
                 else if(pos-prev_pos==1){
                     lidar_msg_t lidar_msg;
