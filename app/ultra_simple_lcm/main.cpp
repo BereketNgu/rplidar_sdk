@@ -296,14 +296,12 @@ int main(int argc, const char * argv[]) {
                 float distance=nodes[pos].dist_mm_q2/4.0f;
                 int qual= nodes[pos].quality >> SL_LIDAR_RESP_MEASUREMENT_QUALITY_SHIFT;
                 
-                if ((theta<10|| theta>350)){
+                if ((theta<10 || theta>350)){
                     prev_pos=pos;
-                    if(qual>0){
-                        if (shortest_dis>distance){
+                    if(qual>0 && shortest_dis>distance){    
                             shortest_dis=distance; 
                             shortest_angle=theta; 
                             shortest_qual=qual;  
-                        }  
                     }                
                 }
                 else if(pos-prev_pos==1){
@@ -317,7 +315,6 @@ int main(int argc, const char * argv[]) {
                     shortest_angle,shortest_dis,shortest_qual);
                     shortest_dis=std::numeric_limits<float>::infinity();
                 }
-
             }
         }
 
