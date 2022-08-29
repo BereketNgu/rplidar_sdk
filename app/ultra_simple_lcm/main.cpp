@@ -297,8 +297,8 @@ int main(int argc, const char * argv[]) {
                 int qual= nodes[pos].quality >> SL_LIDAR_RESP_MEASUREMENT_QUALITY_SHIFT;
                 
                 if ((theta<10|| theta>350)){
+                    prev_pos=pos;
                     if(qual>0){
-                        prev_pos=pos;
                         if (shortest_dis>distance){
                             shortest_dis=distance; 
                             shortest_angle=theta; 
